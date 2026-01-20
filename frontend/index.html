@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🩺</text></svg>">
+    <title>PasteurHub - Intelligent Vaccine Recommendations</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <h1>🏥 PasteurHub</h1>
+                <p class="tagline">Smart Travel Health Guidance</p>
+            </div>
+            <nav class="nav">
+                <button id="loginBtn" class="btn-secondary">Staff Login</button>
+                <button id="logoutBtn" class="btn-secondary" style="display:none;">Logout</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Welcome Section -->
+            <section class="welcome-section">
+                <h2>Welcome to PasteurHub</h2>
+                <p>Get personalized vaccine recommendations for your travel destination or health situation</p>
+            </section>
+
+            <!-- Service Selection -->
+            <section class="service-selection">
+                <div class="service-card" id="travelCard">
+                    <div class="icon">✈️</div>
+                    <h3>Travel Recommendations</h3>
+                    <p>Get vaccine requirements for your destination</p>
+                    <button class="btn-primary">Start</button>
+                </div>
+                <div class="service-card" id="assessmentCard">
+                    <div class="icon">🩺</div>
+                    <h3>Health Assessment</h3>
+                    <p>Get vaccine guidance based on your situation</p>
+                    <button class="btn-primary">Start</button>
+                </div>
+            </section>
+
+            <!-- Travel Recommendations Form -->
+            <section id="travelSection" class="form-section" style="display:none;">
+                <div class="form-container">
+                    <h2>Travel Vaccine Recommendations</h2>
+                    <form id="travelForm">
+                        <div class="form-group">
+                            <label for="destination">Select Your Destination</label>
+                            <select id="destination" required>
+                                <option value="">Loading destinations...</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn-primary">Get Recommendations</button>
+                        <button type="button" class="btn-secondary" id="cancelTravel">Cancel</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Health Assessment Form -->
+            <section id="assessmentSection" class="form-section" style="display:none;">
+                <div class="form-container">
+                    <h2>Health Situation Assessment</h2>
+                    <form id="assessmentForm">
+                        <div class="form-group">
+                            <label for="problemText">Describe Your Situation</label>
+                            <textarea 
+                                id="problemText" 
+                                rows="4" 
+                                placeholder="Example: Dog bite on leg while traveling, concerned about rabies..."
+                                required
+                                minlength="5"
+                            ></textarea>
+                            <small>Minimum 5 characters required</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="scenarioType">Situation Type (Optional)</label>
+                            <select id="scenarioType">
+                                <option value="">Auto-detect from description</option>
+                                <option value="bite">Animal Bite/Scratch</option>
+                                <option value="wound">Wound/Cut</option>
+                                <option value="fever">Fever/Tropical Illness</option>
+                                <option value="gastro">Gastrointestinal Issues</option>
+                                <option value="food_water">Food/Water Contamination</option>
+                                <option value="risk">Blood/Needle Exposure</option>
+                                <option value="polio">Polio Concerns</option>
+                                <option value="crowd">Crowd Exposure</option>
+                                <option value="childhood">Childhood Vaccines</option>
+                                <option value="respiratory">Respiratory Issues</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn-primary">Get Assessment</button>
+                        <button type="button" class="btn-secondary" id="cancelAssessment">Cancel</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section id="resultsSection" class="results-section" style="display:none;">
+                <div class="results-container">
+                    <h2 id="resultsTitle">Results</h2>
+                    <div id="resultsContent"></div>
+                    <button class="btn-secondary" id="backToHome">Back to Home</button>
+                </div>
+            </section>
+
+            <!-- Admin Panel -->
+            <section id="adminPanel" class="admin-panel" style="display:none;">
+                <div class="admin-container">
+                    <h2>Staff Administration Panel</h2>
+                    <div class="admin-tabs">
+                        <button class="tab-btn active" data-tab="vaccines">Manage Vaccines</button>
+                        <button class="tab-btn" data-tab="cases">Manage Cases</button>
+                    </div>
+
+                    <!-- Vaccines Tab -->
+                    <div id="vaccinesTab" class="tab-content active">
+                        <h3>Vaccine Management</h3>
+                        <form id="vaccineForm" class="admin-form">
+                            <div class="form-group">
+                                <label for="vaccineName">Vaccine Name *</label>
+                                <input type="text" id="vaccineName" required minlength="2" maxlength="200">
+                            </div>
+                            <div class="form-group">
+                                <label for="vaccineDesc">Description</label>
+                                <textarea id="vaccineDesc" rows="3"></textarea>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="vaccinePrice">Price (TND)</label>
+                                    <input type="number" id="vaccinePrice" step="0.001" min="0">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn-primary">Add Vaccine</button>
+                        </form>
+                        <div id="vaccinesList" class="items-list"></div>
+                    </div>
+
+                    <!-- Cases Tab -->
+                    <div id="casesTab" class="tab-content">
+                        <h3>Case Management</h3>
+                        <form id="caseForm" class="admin-form">
+                            <div class="form-group">
+                                <label for="caseProblem">Problem Description *</label>
+                                <textarea id="caseProblem" rows="3" required minlength="5"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="caseScenario">Scenario Type</label>
+                                <select id="caseScenario">
+                                    <option value="">None</option>
+                                    <option value="bite">Bite</option>
+                                    <option value="wound">Wound</option>
+                                    <option value="fever">Fever</option>
+                                    <option value="gastro">Gastro</option>
+                                    <option value="food_water">Food/Water</option>
+                                    <option value="risk">Risk</option>
+                                    <option value="polio">Polio</option>
+                                    <option value="crowd">Crowd</option>
+                                    <option value="childhood">Childhood</option>
+                                    <option value="respiratory">Respiratory</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="caseVaccine">Related Vaccine *</label>
+                                <select id="caseVaccine" required>
+                                    <option value="">Select vaccine...</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn-primary">Add Case</button>
+                        </form>
+                        <div id="casesList" class="items-list"></div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Staff Login</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="btn-primary">Login</button>
+            </form>
+            <div id="loginError" class="error-message"></div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay" style="display:none;">
+        <div class="spinner"></div>
+        <p>Loading...</p>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

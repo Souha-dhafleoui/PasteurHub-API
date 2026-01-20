@@ -1,0 +1,47 @@
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: pasteur
+      POSTGRES_USER: pasteur
+      POSTGRES_PASSWORD: pasteur
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pasteur -d pasteur"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+      start_period: 5s
+
+  api:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://pasteur:pasteur@db:5432/pasteur
+
+      JWT_SECRET_KEY: your-secret-key-change-this
+      JWT_ALGORITHM: HS256
+      JWT_EXPIRE_MINUTES: 240
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+
+  ui:
+    image: nginx:alpine
+    ports:
+      - "8501:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+    depends_on:
+      api:
+        condition: service_started
+
+volumes:
+  postgres_data:
