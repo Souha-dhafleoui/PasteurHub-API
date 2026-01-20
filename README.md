@@ -8,7 +8,7 @@ PasteurHub is a RESTful API for travel health support. It provides:
 - A lightweight **frontend demo UI** served by Nginx
 - Interactive API documentation via **Swagger UI**
 
-> ⚠️ **Disclaimer:** This project is for educational/demo purposes and does not replace professional medical advice.
+
 
 ## Features
 
@@ -93,7 +93,7 @@ pasteurhub-api/
 
 ---
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### Prerequisites
 
@@ -170,7 +170,7 @@ This will populate:
 
 ---
 
-## 🗄️ Database Schema
+##  Database Schema
 
 The PostgreSQL database contains the following tables:
 
